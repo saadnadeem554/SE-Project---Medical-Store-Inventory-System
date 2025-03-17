@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Medicine Inventory</h2>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Expiry Date</th>
+                <th>Status</th>
+                {% if session['user_type'] == 'pharmacist' %}
+                <th>Actions</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for medicine in medicines %}
+            <tr {% if medicine.is_expired() %}class="table-danger"{% endif %}>
+                <td>{{ medicine.name }}</td>
+                <td>{{ medicine.category }}</td>
+                <td>${{ "%.2f"|format(medicine.price) }}</td>
+                <td>{{ medicine.quantity }}</td>
+                <td>{{ medicine.expiry_date.strftime('%Y-%m-%d') }}</td>
+                <td>
+                    {% if medicine.is_expired() %}
+                        <span class="badge bg-danger">Expired</span>
+                    {% else %}
+                        <span class="badge bg-success">Valid</span>
+                    {% endif %}
+                </td>
+                {% if session['user_type'] == 'pharmacist' %}
+                <td>
+                    <a href="{{ url_for('update_medicine', id=medicine.id) }}" class="btn btn-sm btn-primary">Update</a>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Update Medicine</h2>
+
+<form method="POST" class="col-md-6">
+    <div class="mb-3">
+        <label for="name" class="form-label">Medicine Name</label>
+        <input type="text" class="form-control" id="name" name="name" value="{{ medicine.name }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="category" class="form-label">Category</label>
+        <input type="text" class="form-control" id="category" name="category" value="{{ medicine.category }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="price" class="form-label">Price</label>
+        <input type="number" step="0.01" class="form-control" id="price" name="price" value="{{ medicine.price }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="quantity" class="form-label">Quantity</label>
+        <input type="number" class="form-control" id="quantity" name="quantity" value="{{ medicine.quantity }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="expiry_date" class="form-label">Expiry Date</label>
+        <input type="date" class="form-control" id="expiry_date" name="expiry_date" value="{{ medicine.expiry_date.strftime('%Y-%m-%d') }}" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update Medicine</button>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}
