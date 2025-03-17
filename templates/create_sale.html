@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Sale{% endblock %}
+
+{% block content %}
+<h1>Create Sale</h1>
+
+<form method="POST">
+    <div class="form-group">
+        <label for="medicine_id">Select Medicine</label>
+        <select class="form-control" id="medicine_id" name="medicine_id" required>
+            <option value="">-- Select Medicine --</option>
+            {% for medicine in medicines %}
+            <option value="{{ medicine.id }}" data-price="{{ medicine.price }}" data-stock="{{ medicine.quantity }}">
+                {{ medicine.name }} - ${{ medicine.price }} (Stock: {{ medicine.quantity }})
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="quantity">Quantity</label>
+        <input type="number" class="form-control" id="quantity" name="quantity" min="1" required>
+        <small id="stock-status" class="form-text"></small>
+    </div>
+    
+    <div class="form-group">
+        <label for="customer_name">Customer Name (Optional)</label>
+        <input type="text" class="form-control" id="customer_name" name="customer_name">
+    </div>
+    
+    <div class="form-group">
+        <label>Total Price</label>
+        <div id="total-price" class="form-control-static">$0.00</div>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Complete Sale</button>
+</form>
+
+<script>
+document.getElementById('medicine_id').addEventListener('change', updatePrice);
+document.getElementById('quantity').addEventListener('input', updatePrice);
+
+function updatePrice() {
+    const medicineSelect = document.getElementById('medicine_id');
+    const quantityInput = document.getElementById('quantity');
+    const totalPriceDiv = document.getElementById('total-price');
+    const stockStatusDiv = document.getElementById('stock-status');
+    
+    if (medicineSelect.selectedIndex > 0) {
+        const option = medicineSelect.options[medicineSelect.selectedIndex];
+        const price = parseFloat(option.dataset.price);
+        const stock = parseInt(option.dataset.stock);
+        const quantity = parseInt(quantityInput.value) || 0;
+        
+        const totalPrice = price * quantity;
+        totalPriceDiv.textContent = `$${totalPrice.toFixed(2)}`;
+        
+        // Check stock status
+        if (quantity > stock) {
+            stockStatusDiv.textContent = `Insufficient stock! Only ${stock} available.`;
+            stockStatusDiv.classList.add('text-danger');
+            stockStatusDiv.classList.remove('text-success');
+        } else if (quantity > 0) {
+            stockStatusDiv.textContent = `Available in stock (${stock} units)`;
+            stockStatusDiv.classList.add('text-success');
+            stockStatusDiv.classList.remove('text-danger');
+        } else {
+            stockStatusDiv.textContent = '';
+        }
+    } else {
+        totalPriceDiv.textContent = '$0.00';
+        stockStatusDiv.textContent = '';
+    }
+}
+</script>
+{% endblock %}

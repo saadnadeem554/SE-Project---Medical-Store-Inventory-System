@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block title %}Inventory Status Report{% endblock %}
+
+{% block content %}
+<h1>Inventory Status Report</h1>
+<p class="text-muted">Generated on {{ current_time }}</p>
+
+<div class="row">
+    <!-- Summary cards -->
+    <div class="col-md-3 mb-4">
+        <div class="card bg-primary text-white h-100">
+            <div class="card-body">
+                <h5 class="card-title">Total Medicines</h5>
+                <h2 class="card-text">{{ total_count }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card bg-success text-white h-100">
+            <div class="card-body">
+                <h5 class="card-title">Well Stocked</h5>
+                <h2 class="card-text">{{ well_stocked }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card bg-warning text-white h-100">
+            <div class="card-body">
+                <h5 class="card-title">Low Stock</h5>
+                <h2 class="card-text">{{ low_stock }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card bg-danger text-white h-100">
+            <div class="card-body">
+                <h5 class="card-title">Out of Stock</h5>
+                <h2 class="card-text">{{ out_of_stock }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">Stock Status Distribution</div>
+            <div class="card-body">
+                <canvas id="stockStatusChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">Medicines by Category</div>
+            <div class="card-body">
+                <canvas id="categoryChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-header">Inventory Value by Category</div>
+            <div class="card-body">
+                <canvas id="valueByCategory" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Add Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+// Stock Status Chart
+const stockStatusCtx = document.getElementById('stockStatusChart').getContext('2d');
+const stockStatusChart = new Chart(stockStatusCtx, {
+    type: 'pie',
+    data: {
+        labels: {{ stock_status_labels|tojson }},
+        datasets: [{
+            data: {{ stock_status_data|tojson }},
+            backgroundColor: [
+                'rgba(220, 53, 69, 0.7)', // Danger/Red (Out of Stock)
+                'rgba(255, 193, 7, 0.7)', // Warning/Yellow (Low Stock)
+                'rgba(40, 167, 69, 0.7)'  // Success/Green (Well Stocked)
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true
+    }
+});
+
+// Category Distribution Chart
+const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+const categoryChart = new Chart(categoryCtx, {
+    type: 'bar',
+    data: {
+        labels: {{ category_labels|tojson }},
+        datasets: [{
+            label: 'Number of Medicines',
+            data: {{ category_values|tojson }},
+            backgroundColor: 'rgba(54, 162, 235, 0.7)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+// Value by Category Chart
+const valueCtx = document.getElementById('valueByCategory').getContext('2d');
+const valueChart = new Chart(valueCtx, {
+    type: 'bar',
+    data: {
+        labels: {{ value_category_labels|tojson }},
+        datasets: [{
+            label: 'Total Inventory Value ($)',
+            data: {{ value_category_data|tojson }},
+            backgroundColor: 'rgba(153, 102, 255, 0.7)',
+            borderColor: 'rgba(153, 102, 255, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return '$' + value;
+                    }
+                }
+            }
+        },
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let label = context.label || '';
+                        let value = context.parsed.y || 0;
+                        return label + ': $' + value.toFixed(2);
+                    }
+                }
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

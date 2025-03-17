@@ -1,11 +1,21 @@
 {% extends 'base.html' %}
 
-{% block content %}
-<h2>Medicine Inventory</h2>
+{% block title %}Inventory{% endblock %}
 
-<div class="table-responsive">
-    <table class="table table-striped">
-        <thead>
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Inventory Management</h1>
+    {% if current_user.role == 'store_manager' %}
+    <a href="{{ url_for('remove_expired') }}" class="btn btn-danger" 
+       onclick="return confirm('Are you sure you want to remove all expired medicines?')">
+        <i class="bi bi-trash"></i> Remove Expired Medicines
+    </a>
+    {% endif %}
+</div>
+
+<div class="table-container">
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
             <tr>
                 <th>Name</th>
                 <th>Category</th>
@@ -13,29 +23,45 @@
                 <th>Quantity</th>
                 <th>Expiry Date</th>
                 <th>Status</th>
-                {% if session['user_type'] == 'pharmacist' %}
+                {% if current_user.role == 'pharmacist' %}
                 <th>Actions</th>
                 {% endif %}
             </tr>
         </thead>
         <tbody>
             {% for medicine in medicines %}
-            <tr {% if medicine.is_expired() %}class="table-danger"{% endif %}>
-                <td>{{ medicine.name }}</td>
-                <td>{{ medicine.category }}</td>
+            <tr>
+                <td><strong>{{ medicine.name }}</strong></td>
+                <td><span class="badge bg-info text-dark">{{ medicine.category }}</span></td>
                 <td>${{ "%.2f"|format(medicine.price) }}</td>
                 <td>{{ medicine.quantity }}</td>
                 <td>{{ medicine.expiry_date.strftime('%Y-%m-%d') }}</td>
                 <td>
-                    {% if medicine.is_expired() %}
-                        <span class="badge bg-danger">Expired</span>
+                    {% if medicine.quantity <= 0 %}
+                    <span class="badge bg-danger">Out of Stock</span>
+                    {% elif medicine.quantity < medicine.min_stock_level %}
+                    <span class="badge bg-warning text-dark">Low Stock</span>
                     {% else %}
-                        <span class="badge bg-success">Valid</span>
+                    <span class="badge bg-success">In Stock</span>
+                    {% endif %}
+                    
+                    {% if medicine.expiry_date < now %}
+                    <span class="badge bg-dark">Expired</span>
                     {% endif %}
                 </td>
-                {% if session['user_type'] == 'pharmacist' %}
+                {% if current_user.role == 'pharmacist' %}
                 <td>
-                    <a href="{{ url_for('update_medicine', id=medicine.id) }}" class="btn btn-sm btn-primary">Update</a>
+                    <div class="btn-group">
+                        <a href="{{ url_for('update_medicine', id=medicine.id) }}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-pencil-fill"></i> Edit
+                        </a>
+                        <form action="{{ url_for('delete_medicine_direct', id=medicine.id) }}" method="POST" class="ms-1">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                    onclick="return confirm('Are you sure you want to delete {{ medicine.name }}?')">
+                                <i class="bi bi-trash-fill"></i> Delete
+                            </button>
+                        </form>
+                    </div>
                 </td>
                 {% endif %}
             </tr>
@@ -43,4 +69,55 @@
         </tbody>
     </table>
 </div>
+
+{% if current_user.role == 'store_manager' %}
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">Inventory Overview</div>
+            <div class="card-body">
+                <canvas id="inventoryOverviewChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Simple overview chart
+    const ctx = document.getElementById('inventoryOverviewChart');
+    
+    if (ctx) {
+        const chart = new Chart(ctx.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Well Stocked', 'Low Stock', 'Out of Stock'],
+                datasets: [{
+                    data: [
+                        {{ well_stocked_count|default(0) }},
+                        {{ low_stock_count|default(0) }},
+                        {{ out_of_stock_count|default(0) }}
+                    ],
+                    backgroundColor: [
+                        'rgba(40, 167, 69, 0.7)', 
+                        'rgba(255, 193, 7, 0.7)', 
+                        'rgba(220, 53, 69, 0.7)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
+{% endif %}
 {% endblock %}

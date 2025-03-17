@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+
+{% block title %}Stock Levels{% endblock %}
+
+{% block content %}
+<h1>Inventory Stock Levels</h1>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card stat-card text-white bg-success h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase mb-1">Well Stocked</h6>
+                        <h2 class="display-4">{{ well_stocked|length }}</h2>
+                    </div>
+                    <i class="bi bi-check-circle-fill" style="font-size: 3rem; opacity: 0.5;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card text-dark bg-warning h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase mb-1">Low Stock</h6>
+                        <h2 class="display-4">{{ low_stock|length }}</h2>
+                    </div>
+                    <i class="bi bi-exclamation-triangle-fill" style="font-size: 3rem; opacity: 0.5;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card text-white bg-danger h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase mb-1">Out of Stock</h6>
+                        <h2 class="display-4">{{ out_of_stock|length }}</h2>
+                    </div>
+                    <i class="bi bi-x-circle-fill" style="font-size: 3rem; opacity: 0.5;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Stock Level Distribution</div>
+            <div class="card-body">
+                <canvas id="stockLevelChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Expiring Soon</div>
+            <div class="card-body">
+                <canvas id="expiryChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<h2>Out of Stock Items</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Quantity</th>
+            <th>Min Stock Level</th>
+            <th>Price</th>  <!-- Add this header -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for medicine in out_of_stock %}
+        <tr>
+            <td>{{ medicine.name }}</td>
+            <td>{{ medicine.category }}</td>
+            <td class="text-danger">{{ medicine.quantity }}</td>
+            <td>{{ medicine.min_stock_level }}</td>
+            <td>${{ "%.2f"|format(medicine.price) }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>Low Stock Items</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Quantity</th>
+            <th>Min Stock Level</th>
+            <th>Price</th>  <!-- Add this header -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for medicine in low_stock %}
+        <tr>
+            <td>{{ medicine.name }}</td>
+            <td>{{ medicine.category }}</td>
+            <td class="text-warning">{{ medicine.quantity }}</td>
+            <td>{{ medicine.min_stock_level }}</td>
+            <td>${{ "%.2f"|format(medicine.price) }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>Well Stocked Items</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Quantity</th>
+            <th>Min Stock Level</th>
+            <th>Price</th>  <!-- Add this header -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for medicine in well_stocked %}
+        <tr>
+            <td>{{ medicine.name }}</td>
+            <td>{{ medicine.category }}</td>
+            <td class="text-success">{{ medicine.quantity }}</td>
+            <td>{{ medicine.min_stock_level }}</td>
+            <td>${{ "%.2f"|format(medicine.price) }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Replace the problematic code in stock_levels.html -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Stock Level Distribution Chart
+    const stockLevelCtx = document.getElementById('stockLevelChart').getContext('2d');
+    const stockLevelChart = new Chart(stockLevelCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Out of Stock', 'Low Stock', 'Well Stocked'],
+            datasets: [{
+                data: [
+                    {{ out_of_stock|length }}, 
+                    {{ low_stock|length }}, 
+                    {{ well_stocked|length }}
+                ],
+                backgroundColor: [
+                    'rgba(220, 53, 69, 0.7)',
+                    'rgba(255, 193, 7, 0.7)',
+                    'rgba(40, 167, 69, 0.7)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Expiry Chart - Use pre-calculated data from Python 
+    const expiryCtx = document.getElementById('expiryChart').getContext('2d');
+    const expiryChart = new Chart(expiryCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Expiring This Week', 'Expiring This Month', 'Expired'],
+            datasets: [{
+                data: [
+                    {{ expiring_data.this_week }},
+                    {{ expiring_data.this_month }},
+                    {{ expiring_data.expired }}
+                ],
+                backgroundColor: [
+                    'rgba(255, 193, 7, 0.7)',
+                    'rgba(23, 162, 184, 0.7)',
+                    'rgba(220, 53, 69, 0.7)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

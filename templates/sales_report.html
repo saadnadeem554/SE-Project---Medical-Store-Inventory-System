@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+
+{% block title %}Sales Report{% endblock %}
+
+{% block content %}
+<h1>Sales Reports</h1>
+<p class="text-muted">Generated on {{ current_time }}</p>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Sales Overview</div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-3">
+                    <div>
+                        <h5>Total Revenue</h5>
+                        <h3 class="text-success">${{ "%.2f"|format(total_revenue) }}</h3>
+                    </div>
+                    <div>
+                        <h5>Total Sales</h5>
+                        <h3>{{ total_sales_count }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-header">Daily Sales (Last 7 Days)</div>
+            <div class="card-body">
+                <canvas id="dailySalesChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">Sales by Category</div>
+            <div class="card-body">
+                <canvas id="categorySalesChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-header">Monthly Revenue</div>
+            <div class="card-body">
+                <canvas id="monthlyRevenueChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">Top Selling Products</div>
+            <div class="card-body">
+                <canvas id="topProductsChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Recent Sales</span>
+        <a href="{{ url_for('export_sales_csv') }}" class="btn btn-sm btn-primary">Export CSV</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Medicine</th>
+                        <th>Customer</th>
+                        <th>Qty</th>
+                        <th>Unit Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sale in sales %}
+                    <tr>
+                        <td>{{ sale.sale_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>{{ sale.medicine.name }}</td>
+                        <td>{{ sale.customer_name or 'Walk-in Customer' }}</td>
+                        <td>{{ sale.quantity }}</td>
+                        <td>${{ "%.2f"|format(sale.sale_price) }}</td>
+                        <td>${{ "%.2f"|format(sale.total_price) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Add Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+// Daily sales chart
+const dailySalesCtx = document.getElementById('dailySalesChart').getContext('2d');
+const dailySalesChart = new Chart(dailySalesCtx, {
+    type: 'line',
+    data: {
+        labels: {{ daily_labels|default([])|tojson }},
+        datasets: [{
+            label: 'Daily Sales ($)',
+            data: {{ daily_sales|default([])|tojson }},
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 2,
+            tension: 0.1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return '$' + value;
+                    }
+                }
+            }
+        }
+    }
+});
+
+// Category sales chart
+const categorySalesCtx = document.getElementById('categorySalesChart').getContext('2d');
+const categorySalesChart = new Chart(categorySalesCtx, {
+    type: 'doughnut',
+    data: {
+        labels: {{ category_labels|default([])|tojson }},
+        datasets: [{
+            data: {{ category_values|default([])|tojson }},
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.7)',
+                'rgba(54, 162, 235, 0.7)',
+                'rgba(255, 206, 86, 0.7)',
+                'rgba(75, 192, 192, 0.7)',
+                'rgba(153, 102, 255, 0.7)',
+                'rgba(255, 159, 64, 0.7)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true
+    }
+});
+
+// Monthly Revenue Chart
+const monthlyCtx = document.getElementById('monthlyRevenueChart').getContext('2d');
+const monthlyChart = new Chart(monthlyCtx, {
+    type: 'line',
+    data: {
+        labels: {{ month_labels|default([])|tojson }},
+        datasets: [{
+            label: 'Monthly Revenue ($)',
+            data: {{ month_values|default([])|tojson }},
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 2,
+            tension: 0.1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return '$' + value;
+                    }
+                }
+            }
+        }
+    }
+});
+
+// Top Products Chart
+const productsCtx = document.getElementById('topProductsChart').getContext('2d');
+const productsChart = new Chart(productsCtx, {
+    type: 'bar',
+    data: {
+        labels: {{ product_labels|default([])|tojson }},
+        datasets: [{
+            label: 'Units Sold',
+            data: {{ product_values|default([])|tojson }},
+            backgroundColor: 'rgba(75, 192, 192, 0.7)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    precision: 0
+                }
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

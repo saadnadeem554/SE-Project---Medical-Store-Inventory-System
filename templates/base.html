@@ -5,41 +5,663 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medical Store Inventory System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Add Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        /* Custom styles for notifications dropdown */
+        .notification-dropdown {
+            min-width: 320px;
+            padding: 0;
+        }
+        .notification-header {
+            background-color: #f8f9fa;
+            padding: 10px 15px;
+            border-bottom: 1px solid #dee2e6;
+            font-weight: bold;
+        }
+        .notification-body {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .notification-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #f1f1f1;
+        }
+        .notification-item:hover {
+            background-color: #f8f9fa;
+        }
+        .notification-item.danger {
+            border-left: 4px solid #dc3545;
+        }
+        .notification-item.warning {
+            border-left: 4px solid #ffc107;
+        }
+
+        :root {
+            /* Light mode variables (default) */
+            --bg-main: #f8f9fa;
+            --bg-card: #ffffff;
+            --text-color: #212529;
+            --border-color: #dee2e6;
+            --nav-bg: #343a40;
+            --link-color: #007bff;
+            --hover-bg: #f0f0f0;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --chart-grid: rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-main: #121212;
+            --bg-card: #1e1e1e;
+            --text-color: #e0e0e0;
+            --border-color: #444;
+            --nav-bg: #1a1a1a;
+            --link-color: #4da3ff;
+            --hover-bg: #2a2a2a;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --chart-grid: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+
+        .navbar {
+            background-color: var(--nav-bg) !important;
+            box-shadow: var(--shadow);
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border-color: var(--border-color);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .table {
+            color: var(--text-color);
+            border-color: var(--border-color);
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: var(--hover-bg);
+        }
+
+        .alert {
+            animation: slideDown 0.5s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Animation for page elements */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Theme switch styling */
+        .theme-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+
+        /* Enhanced table styling */
+        .table {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        .table thead th {
+            border-top: none;
+            background-color: var(--hover-bg);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        /* Card enhancements */
+        .card-header {
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        /* Dashboard card stats */
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card .card-body {
+            z-index: 10;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            bottom: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            z-index: 0;
+        }
+
+        /* Button enhancements */
+        .btn {
+            transition: all 0.3s ease;
+            border-radius: 5px;
+            padding: 0.5rem 1.25rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        /* Form styling */
+        .form-control, .form-select {
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-card);
+            color: var(--text-color);
+            transition: var(--transition);
+            padding: 0.75rem 1rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: var(--bg-card);
+            color: var (--text-color);
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+        }
+
+        /* Notification dropdown enhancements */
+        .notification-dropdown {
+            border-radius: 8px;
+            background-color: var(--bg-card);
+            color: var(--text-color);
+            overflow: hidden;
+        }
+
+        .notification-item {
+            transition: var(--transition);
+            background-color: var(--bg-card);
+            color: var(--text-color);
+        }
+
+        /* Animated notification bell */
+        .notification-bell {
+            animation: bell 2s infinite;
+            transform-origin: 50% 0%;
+        }
+
+        @keyframes bell {
+            0%, 50%, 100% { transform: rotate(0deg); }
+            5%, 15%, 25% { transform: rotate(10deg); }
+            10%, 20%, 30% { transform: rotate(-10deg); }
+        }
+
+        .notification-badge {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Dark mode improvements for tables */
+        [data-theme="dark"] .table {
+            color: var(--text-color);
+        }
+        
+        [data-theme="dark"] .table thead th {
+            color: #fff;
+            background-color: #343a40;
+            border-color: #454d55;
+        }
+        
+        [data-theme="dark"] .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        [data-theme="dark"] .table-hover tbody tr:hover {
+            color: #e2e2e2;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        [data-theme="dark"] .table td, 
+        [data-theme="dark"] .table th {
+            border-color: #454d55;
+        }
+        
+        /* Fix for light text on dark badges */
+        [data-theme="dark"] .badge.bg-warning {
+            color: #212529 !important;
+        }
+        
+        /* Table improvements for both modes */
+        .table {
+            border-radius: 0.375rem;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        .table thead {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+        
+        .table-container {
+            border-radius: 0.375rem;
+            overflow: hidden;
+        }
+        
+        /* Card improvements */
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+        }
+        
+        /* Improved select contrast for dark mode */
+        [data-theme="dark"] .form-select {
+            background-color: #2c2c2c;
+            color: var(--text-color);
+            border-color: #444;
+        }
+        
+        /* Fix for table-light header in dark mode */
+        [data-theme="dark"] .table-light, 
+        [data-theme="dark"] .table-light>td, 
+        [data-theme="dark"] .table-light>th {
+            background-color: #343a40;
+            color: #fff;
+        }
+        
+        /* Fix for background colors in dark mode for table variants */
+        [data-theme="dark"] .table-primary {
+            background-color: rgba(13, 110, 253, 0.2);
+        }
+        
+        [data-theme="dark"] .table-secondary {
+            background-color: rgba(108, 117, 125, 0.2);
+        }
+        
+        [data-theme="dark"] .table-success {
+            background-color: rgba(25, 135, 84, 0.2);
+        }
+        
+        [data-theme="dark"] .table-info {
+            background-color: rgba(13, 202, 240, 0.2);
+        }
+        
+        [data-theme="dark"] .table-warning {
+            background-color: rgba(255, 193, 7, 0.2);
+        }
+        
+        [data-theme="dark"] .table-danger {
+            background-color: rgba(220, 53, 69, 0.2);
+        }
+
+        /* Dark mode table improvements */
+        [data-theme="dark"] .table {
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .table thead th {
+            color: #fff;
+            background-color: #343a40;
+            border-color: #454d55;
+        }
+
+        /* Fix striped rows in dark mode */
+        [data-theme="dark"] .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-color); /* Ensure text is visible */
+        }
+
+        [data-theme="dark"] .table-striped tbody tr:nth-of-type(even) {
+            background-color: transparent;
+            color: var(--text-color); /* Ensure text is visible */
+        }
+
+        /* Fix hover effect in dark mode */
+        [data-theme="dark"] .table-hover tbody tr:hover {
+            color: #ffffff !important; /* Force white text on hover */
+            background-color: rgba(255, 255, 255, 0.15) !important; /* Brighter background on hover */
+        }
+
+        [data-theme="dark"] .table td, 
+        [data-theme="dark"] .table th {
+            border-color: #454d55;
+        }
+
+        /* Make sure all table text is visible in dark mode regardless of theme */
+        [data-theme="dark"] .table td,
+        [data-theme="dark"] .table th,
+        [data-theme="dark"] .table tr {
+            color: var(--text-color) !important;
+        }
+
+        /* Fix hover overrides from Bootstrap */
+        [data-theme="dark"] .table-hover tbody tr:hover * {
+            color: #ffffff !important; /* Ensure all text in hovered rows is visible */
+        }
+
+        /* Override Bootstrap's table-dark in dark mode */
+        [data-theme="dark"] .table-dark {
+            background-color: #343a40;
+        }
+
+        [data-theme="dark"] .table-dark td,
+        [data-theme="dark"] .table-dark th,
+        [data-theme="dark"] .table-dark tr {
+            color: #ffffff !important;
+        }
+
+        /* Fix dropdown menus in dark mode */
+        [data-theme="dark"] .dropdown-menu {
+            background-color: #2c2c2c !important;
+            border-color: #444 !important;
+            color: var(--text-color) !important;
+        }
+
+        [data-theme="dark"] .dropdown-item {
+            color: var(--text-color) !important;
+        }
+
+        [data-theme="dark"] .dropdown-item:hover,
+        [data-theme="dark"] .dropdown-item:focus {
+            background-color: #444 !important;
+            color: #ffffff !important;
+        }
+
+        /* Fix form fields in dark mode */
+        [data-theme="dark"] .form-control {
+            background-color: #2c2c2c !important;
+            color: #e0e0e0 !important;
+            border-color: #444 !important;
+        }
+
+        [data-theme="dark"] .form-select {
+            background-color: #2c2c2c !important;
+            color: #e0e0e0 !important;
+            border-color: #444 !important;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23ffffff' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e") !important;
+        }
+
+        /* Input placeholder color */
+        [data-theme="dark"] .form-control::placeholder {
+            color: #888 !important;
+        }
+
+        /* Fix for select focus state */
+        [data-theme="dark"] .form-select:focus,
+        [data-theme="dark"] .form-control:focus {
+            border-color: #0d6efd !important;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+            background-color: #383838 !important;
+        }
+
+        /* Fix specific forms with dark background */
+        [data-theme="dark"] .form-control-dark {
+            background-color: #1e1e1e !important;
+        }
+
+        /* Fix option elements in selects */
+        [data-theme="dark"] option {
+            background-color: #2c2c2c;
+            color: #e0e0e0;
+        }
+
+        /* Dark mode alert styling */
+        [data-theme="dark"] .alert {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        [data-theme="dark"] .alert-success {
+            background-color: rgba(25, 135, 84, 0.2);
+            color: #75b798;
+        }
+        
+        [data-theme="dark"] .alert-danger, 
+        [data-theme="dark"] .alert-error {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: #ea868f;
+        }
+        
+        [data-theme="dark"] .alert-warning {
+            background-color: rgba(255, 193, 7, 0.2);
+            color: #ffda6a;
+        }
+        
+        [data-theme="dark"] .alert-info {
+            background-color: rgba(13, 202, 240, 0.2);
+            color: #6edff6;
+        }
+        
+        [data-theme="dark"] .alert-primary {
+            background-color: rgba(13, 110, 253, 0.2);
+            color: #6ea8fe;
+        }
+        
+        [data-theme="dark"] .alert-secondary {
+            background-color: rgba(108, 117, 125, 0.2);
+            color: #a7acb1;
+        }
+        
+        /* Alert animations */
+        .alert {
+            animation: fadeInDown 0.5s ease;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('index') }}">Medical Store</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <!-- Main navigation links (left side) -->
                 <ul class="navbar-nav me-auto">
-                    {% if 'user_type' in session %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('index') }}">Inventory</a>
-                        </li>
-                        {% if session['user_type'] == 'pharmacist' %}
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.role == 'pharmacist' %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('add_medicine') }}">Add Medicine</a>
                             </li>
-                        {% endif %}
-                        {% if session['user_type'] == 'store_manager' %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('delete_expired') }}">Remove Expired</a>
+                                <a class="nav-link" href="{{ url_for('create_sale') }}">New Sale</a>
+                            </li>
+                        {% endif %}
+                        
+                        {% if current_user.role == 'store_manager' %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('stock_levels') }}">Monitor Stock</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('reports_dashboard') }}">Inventory Reports</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('sales_report') }}">Sales Reports</a>
+                            </li>
+                        {% endif %}
+                        
+                        {% if current_user.role == 'cashier' %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('create_sale') }}">New Sale</a>
                             </li>
                         {% endif %}
                     {% endif %}
                 </ul>
-                {% if 'user_type' in session %}
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <span class="nav-link">Logged in as: {{ session['username'] }} ({{ session['user_type'] }})</span>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
-                        </li>
-                    </ul>
+                
+                <!-- Right-aligned items -->
+                {% if current_user.is_authenticated %}
+                <div class="d-flex align-items-center">
+                    <!-- Notification icon first (if manager) -->
+                    {% if current_user.role == 'store_manager' %}
+                    <div class="dropdown me-3">
+                        <a class="nav-link position-relative text-light" href="#" id="notificationDropdown" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-bell-fill" style="font-size: 1.2rem;"></i>
+                            
+                            {% if notification_count > 0 %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge">
+                                    {{ notification_count }}
+                                    <span class="visually-hidden">unread notifications</span>
+                                </span>
+                            {% endif %}
+                        </a>
+                        <!-- Dropdown menu content remains unchanged -->
+                        <div class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationDropdown">
+                            <div class="notification-header">
+                                Inventory Alerts
+                            </div>
+                            <div class="notification-body">
+                                {% set has_notifications = false %}
+                                
+                                {% for medicine in medicines %}
+                                    {% if medicine.quantity <= 0 %}
+                                        {% set has_notifications = true %}
+                                        <div class="notification-item danger">
+                                            <div class="d-flex justify-content-between">
+                                                <strong>{{ medicine.name }}</strong>
+                                                <span class="text-danger">Out of Stock</span>
+                                            </div>
+                                            <small>Category: {{ medicine.category }}</small>
+                                        </div>
+                                    {% elif medicine.quantity < medicine.min_stock_level %}
+                                        {% set has_notifications = true %}
+                                        <div class="notification-item warning">
+                                            <div class="d-flex justify-content-between">
+                                                <strong>{{ medicine.name }}</strong>
+                                                <span class="text-warning">Low Stock ({{ medicine.quantity }})</span>
+                                            </div>
+                                            <small>Min. Required: {{ medicine.min_stock_level }}</small>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                {% if not has_notifications %}
+                                    <div class="notification-item">
+                                        <p class="text-success mb-0">All inventory levels are adequate.</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-center" href="{{ url_for('stock_levels') }}">
+                                View All Stock Levels
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Theme switch button -->
+                    <div class="d-flex align-items-center me-3">
+                        <label class="theme-switch" title="Toggle dark/light mode">
+                            <input type="checkbox" id="theme-toggle">
+                            <span class="slider">
+                                <i class="bi bi-moon-stars-fill text-white position-absolute" 
+                                   style="left: 8px; top: 7px; font-size: 0.8rem;"></i>
+                                <i class="bi bi-brightness-high-fill text-dark position-absolute" 
+                                   style="right: 8px; top: 7px; font-size: 0.8rem;"></i>
+                            </span>
+                        </label>
+                    </div>
+                    
+                    <!-- Logout button (rightmost element) -->
+                    <div>
+                        <a class="nav-link text-light" href="{{ url_for('logout') }}">Logout</a>
+                    </div>
+                </div>
+                {% else %}
+                    <div>
+                        <a class="nav-link text-light" href="{{ url_for('login') }}">Login</a>
+                    </div>
                 {% endif %}
             </div>
         </div>
@@ -58,5 +680,46 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Theme toggle functionality
+            const themeToggle = document.getElementById('theme-toggle');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            // Set initial theme based on localStorage or system preference
+            if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && prefersDark)) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                themeToggle.checked = true;
+            }
+            
+            themeToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+            
+            // Add fade-in class to content for animation
+            const contentContainer = document.querySelector('.container.mt-4');
+            if (contentContainer) {
+                contentContainer.classList.add('fade-in');
+            }
+            
+            // Add animation class for notification bell
+            const notificationBell = document.querySelector('.bi-bell-fill');
+            if (notificationBell && document.querySelector('.notification-badge')) {
+                notificationBell.classList.add('notification-bell');
+            }
+            
+            // Make tables with long content scrollable horizontally
+            const tables = document.querySelectorAll('.table-responsive');
+            tables.forEach(table => {
+                table.style.maxHeight = '70vh';
+            });
+        });
+    </script>
 </body>
 </html>
