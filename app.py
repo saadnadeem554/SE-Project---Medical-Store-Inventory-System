@@ -605,10 +605,11 @@ def add_medicine():
                 return render_template('add_medicine.html', categories=MEDICINE_CATEGORIES)
                 
             # Parse date with proper error handling
+            # validating date format
             try:
                 expiry_date = datetime.strptime(expiry_date_str, '%Y-%m-%d').date()
             except ValueError:
-                flash('Invalid date format. Use YYYY-MM-DD', 'error')
+                flash('Invalid date format.  Use YYYY-MM-DD', 'error')
                 return render_template('add_medicine.html', categories=MEDICINE_CATEGORIES)
             
             # Check for exact duplicates (same name, category, and expiry date)
