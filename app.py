@@ -670,9 +670,9 @@ def update_medicine(id):
 @app.route('/remove_expired')
 @login_required
 def remove_expired():
-    # Renamed from delete_expired to match navigation
+    # Renamed from delete_expired to match navigationn
     if current_user.role != 'store_manager':  # Use current_user for consistency
-        flash('Only store managers can delete expired medicines.', 'error')
+        flash('Only the store managers can delete expired medicines.', 'error')
         return redirect(url_for('index'))
 
     try:
@@ -681,7 +681,7 @@ def remove_expired():
         
         for medicine in expired_medicines:
             db.session.delete(medicine)
-        
+        # Commit all deletions at once
         db.session.commit()
         flash(f'{count} expired medicines removed successfully!', 'success')
 
