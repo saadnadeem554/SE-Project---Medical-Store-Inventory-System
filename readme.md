@@ -103,6 +103,155 @@ The Pharmacy Management System is a comprehensive web application designed to he
 - Make sales
 - View inventory
 
+# Medical Store Management System - Class Diagram Documentation
+
+## Core Components
+
+### 1. Abstract Base Classes
+
+#### UserMixin
+- Purpose: Provides Flask-Login integration
+- Key Features:
+  - Authentication state management
+  - User session handling
+  - Login/logout functionality
+
+#### BaseModel
+- Common attributes shared across models:
+  - id: Primary key
+  - created_at: Creation timestamp
+  - updated_at: Last modification timestamp
+
+### 2. User Management System
+
+#### User
+- Core user entity handling authentication and authorization
+- Attributes:
+  - username
+  - password (hashed)
+  - email
+  - user_type
+- Methods:
+  - verify_password()
+  - has_permission()
+  - generate_password_hash()
+
+#### Role
+- Enum class defining user types:
+  - PHARMACIST
+  - STORE_MANAGER
+  - CASHIER
+
+#### Permission & RolePermission
+- Implements many-to-many relationship between roles and permissions
+- Enables granular access control
+
+### 3. Inventory Management
+
+#### Medicine
+- Central entity for pharmaceutical inventory
+- Key features:
+  - Stock tracking
+  - Expiry management
+  - Price management
+- Methods:
+  - is_expired()
+  - stock_status()
+  - update_stock()
+  - calculate_value()
+
+#### Category
+- Logical grouping of medicines
+- Enables inventory organization and reporting
+
+#### StockAlert
+- Monitors inventory levels
+- Alert Types:
+  ```
+  - LOW_STOCK
+  - OUT_OF_STOCK
+  - NEAR_EXPIRY
+  - EXPIRED
+  ```
+
+### 4. Transaction System
+
+#### Sale
+- Handles sales transactions
+- Features:
+  - Receipt generation
+  - Stock validation
+  - Price calculation
+  - Cashier tracking
+
+### 5. Reporting System
+
+#### Base Report
+- Abstract base for all reports
+- Common reporting functionality
+
+#### Specialized Reports
+1. **InventoryReport**
+   - Stock status analysis
+   - Expiry tracking
+   - Value calculation
+
+2. **SalesReport**
+   - Revenue analysis
+   - Daily sales tracking
+   - Top-selling items
+
+## Relationships
+
+### Inheritance
+```
+User --|> UserMixin
+Medicine --|> BaseModel
+Sale --|> BaseModel
+```
+
+### Composition
+```
+User *-- Role (User has one Role)
+Role *-- Permission (Role contains multiple Permissions)
+```
+
+### Associations
+```
+Medicine -- Sale (One-to-Many)
+Medicine -- StockAlert (One-to-Many)
+Medicine -- Category (Many-to-One)
+```
+
+### Many-to-Many
+```
+Role -- Permission (through RolePermission)
+```
+
+## Role-Based Access Control
+
+### Pharmacist Permissions
+- Add/Update/Delete medicines
+- Make sales
+- View inventory
+
+### Store Manager Permissions
+- View/Export reports
+- Remove expired medicines
+- Monitor stock
+- Receive alerts
+
+### Cashier Permissions
+- Make sales
+- View inventory
+
+## Stock Status Definitions
+```
+- well_stocked: Quantity >= min_stock_level
+- low_stock: 0 < Quantity < min_stock_level
+- out_of_stock: Quantity = 0
+```
+
 ## Screenshots
 
 ![image](https://github.com/user-attachments/assets/955a1627-c125-4a17-b077-08b82f6b2eac)
