@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, make_response
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from datetime import datetime, date, timedelta, time  # Added time here
+from datetime import datetime, date, timedelta, time  
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
@@ -9,7 +9,7 @@ from io import StringIO
 import csv
 from sqlalchemy import func
 import random
-import time as time_module  # Rename the time module to avoid conflicts
+import time as time_module  
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///medical_store.db'
@@ -26,7 +26,7 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# User Model
+# User Model class
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
