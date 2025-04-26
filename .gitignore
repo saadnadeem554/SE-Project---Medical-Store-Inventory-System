@@ -1,9 +1,13 @@
-# Python bytecode
+# Python bytecode - comprehensive patterns
 __pycache__/
+**/__pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
+**/*.cpython-*
+**/*.cpython-*.pyc
+**/*.pyc
 
 # Distribution / packaging
 build/
@@ -100,3 +104,4 @@ tmp/
 
 # Application specific
 .flask_session/
+.cpython-312.pyc
