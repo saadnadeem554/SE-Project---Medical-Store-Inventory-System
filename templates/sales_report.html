@@ -86,7 +86,7 @@
                     {% for sale in sales %}
                     <tr>
                         <td>{{ sale.sale_date.strftime('%Y-%m-%d %H:%M') }}</td>
-                        <td>{{ sale.medicine.name }}</td>
+                        <td>{{ sale.medicine_name }}</td>
                         <td>{{ sale.customer_name or 'Walk-in Customer' }}</td>
                         <td>{{ sale.quantity }}</td>
                         <td>${{ "%.2f"|format(sale.sale_price) }}</td>

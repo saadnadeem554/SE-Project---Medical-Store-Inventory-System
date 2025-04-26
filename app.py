@@ -61,10 +61,12 @@ class Medicine(db.Model):
         else:
             return "well_stocked"
 
+# Modified Sale model
 class Sale(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    medicine_id = db.Column(db.Integer, db.ForeignKey('medicine.id'), nullable=False)
-    medicine = db.relationship('Medicine', backref=db.backref('sales', lazy=True))
+    medicine_id = db.Column(db.Integer)  # Just store the ID without a foreign key constraint
+    medicine_name = db.Column(db.String(100), nullable=False)  # Store medicine name at time of sale
+    medicine_category = db.Column(db.String(50), nullable=False)  # Store category at time of sale
     quantity = db.Column(db.Integer, nullable=False)
     sale_price = db.Column(db.Float, nullable=False)
     customer_name = db.Column(db.String(100), nullable=True)
@@ -153,12 +155,12 @@ with app.app_context():
                 Medicine(
                     name='Amoxicillin 500mg', category='Antibiotics',
                     price=12.50, quantity=50, min_stock_level=15,
-                    expiry_date=datetime.now().date().replace(year=datetime.now().year + 1)
+                    expiry_date=datetime.now().date() + timedelta(days=365)  # One year from now
                 ),
                 Medicine(
                     name='Azithromycin 250mg', category='Antibiotics',
                     price=15.99, quantity=30, min_stock_level=10,
-                    expiry_date=datetime.now().date().replace(year=datetime.now().year + 2)
+                    expiry_date=datetime.now().date() + timedelta(days=730)  # Two years from now
                 ),
                 Medicine(
                     name='Ciprofloxacin 500mg', category='Antibiotics',
@@ -371,7 +373,7 @@ with app.app_context():
             if all_medicines:
                 sales = []
                 
-                # Generate sales spanning the last 6 months
+                # Generate sales spanning the last 6 months with current year
                 end_date = datetime.now()
                 start_date = end_date - timedelta(days=180)
                 current_date = start_date
@@ -416,14 +418,17 @@ with app.app_context():
                         second = random.randint(0, 59)
                         sale_datetime = datetime.combine(
                             current_date.date(), 
-                            time(hour, minute, second)  # This now uses datetime.time
+                            time(hour, minute, second)
                         )
                         
                         # Random customer name or None
                         customer = random.choice(customer_names)
                         
+                        # Create a sale record with all medicine information captured at sale time
                         sale = Sale(
-                            medicine_id=medicine.id,
+                            medicine_id=medicine.id,  # Still store the ID for reference
+                            medicine_name=medicine.name,  # Store the name at time of sale
+                            medicine_category=medicine.category,  # Store the category at time of sale
                             quantity=quantity,
                             sale_price=round(sale_price, 2),
                             customer_name=customer,
@@ -436,8 +441,8 @@ with app.app_context():
                     current_date += timedelta(days=1)
                 
                 # Add special sales patterns
-                # 1. Holiday/promotion spike
-                holiday_date = end_date - timedelta(days=random.randint(15, 45))
+                # 1. Holiday/promotion spike (within the last 30 days)
+                holiday_date = end_date - timedelta(days=random.randint(7, 30))
                 for _ in range(25):  # Extra sales during promotion
                     medicine = random.choice(all_medicines)
                     quantity = random.randint(1, 5)
@@ -447,8 +452,11 @@ with app.app_context():
                         holiday_date.date(), 
                         time(hour, minute, random.randint(0, 59))
                     )
+                    
                     sale = Sale(
                         medicine_id=medicine.id,
+                        medicine_name=medicine.name,  # Store name at time of sale
+                        medicine_category=medicine.category,  # Store category at time of sale
                         quantity=quantity,
                         sale_price=round(medicine.price * 0.9, 2),  # 10% discount
                         customer_name=random.choice(customer_names),
@@ -746,7 +754,7 @@ def stock_levels():
 @app.route('/sale', methods=['GET', 'POST'])
 @login_required
 def create_sale():
-    if current_user.role not in ['cashier', 'pharmacist']:  # Changed from session to current_user
+    if current_user.role not in ['cashier', 'pharmacist']:
         flash('You do not have permission to make sales.', 'error')
         return redirect(url_for('index'))
     
@@ -771,13 +779,17 @@ def create_sale():
             flash(f"Insufficient stock. Available: {medicine.quantity} units", 'error')
             return render_template('create_sale.html', medicines=medicines)
         
+        # Create a sale record with all medicine information captured at sale time
         sale = Sale(
-            medicine_id=medicine_id,
+            medicine_id=medicine.id,  # Still store the ID for reference
+            medicine_name=medicine.name,  # Store the name at time of sale
+            medicine_category=medicine.category,  # Store the category at time of sale
             quantity=quantity,
             sale_price=medicine.price,
             customer_name=customer_name
         )
         
+        # Update inventory
         medicine.quantity -= quantity
         
         try:
@@ -900,9 +912,15 @@ def export_inventory_csv():
     
     return response
 
-def check_stock_and_notify():
-    """Helper function to check stock levels"""
-    with app.app_context():
+def check_stock_and_notify(in_context=False):
+    """Helper function to check stock levels
+    
+    Args:
+        in_context: Set to True if already in an app context
+    """
+    # Use this approach to avoid nested contexts
+    if in_context:
+        # Execute directly without creating a new context
         low_stock_items = Medicine.query.filter(
             Medicine.quantity > 0,
             Medicine.quantity < Medicine.min_stock_level
@@ -910,9 +928,18 @@ def check_stock_and_notify():
         
         out_of_stock_items = Medicine.query.filter(Medicine.quantity <= 0).all()
         
-        # We don't need to add notifications to database anymore
-        # Just return the counts for flashing messages if needed
         return len(low_stock_items), len(out_of_stock_items)
+    else:
+        # Original behavior with context
+        with app.app_context():
+            low_stock_items = Medicine.query.filter(
+                Medicine.quantity > 0,
+                Medicine.quantity < Medicine.min_stock_level
+            ).all()
+            
+            out_of_stock_items = Medicine.query.filter(Medicine.quantity <= 0).all()
+            
+            return len(low_stock_items), len(out_of_stock_items)
 
 # Route to manually trigger stock check
 @app.route('/check_stock')
@@ -953,14 +980,14 @@ def export_sales_csv():
     writer.writerow(['Sale ID', 'Date', 'Medicine', 'Category', 'Quantity', 
                      'Unit Price', 'Total', 'Customer'])
     
-    sales = Sale.query.join(Medicine).order_by(Sale.sale_date.desc()).all()
+    sales = Sale.query.order_by(Sale.sale_date.desc()).all()
     
     for sale in sales:
         writer.writerow([
             sale.id,
             sale.sale_date.strftime('%Y-%m-%d %H:%M:%S'),
-            sale.medicine.name,
-            sale.medicine.category,
+            sale.medicine_name,
+            sale.medicine_category,
             sale.quantity,
             f"${sale.sale_price:.2f}",
             f"${sale.total_price:.2f}",
@@ -1023,23 +1050,19 @@ def sales_report():
     
     # Sales by category
     category_data = db.session.query(
-        Medicine.category, func.sum(Sale.quantity * Sale.sale_price)
-    ).join(Medicine, Medicine.id == Sale.medicine_id).group_by(
-        Medicine.category
-    ).all()
-    
+        Sale.medicine_category, func.sum(Sale.quantity * Sale.sale_price)
+    ).group_by(Sale.medicine_category).all()
+
     category_labels = [item[0] for item in category_data]
     category_values = [float(item[1]) for item in category_data]
-    
+
     # Top selling products
     product_sales = {}
     for sale in sales:
-        medicine = Medicine.query.get(sale.medicine_id)
-        if medicine:
-            if medicine.name in product_sales:
-                product_sales[medicine.name] += sale.quantity
-            else:
-                product_sales[medicine.name] = sale.quantity
+        if sale.medicine_name in product_sales:
+            product_sales[sale.medicine_name] += sale.quantity
+        else:
+            product_sales[sale.medicine_name] = sale.quantity
     
     # Sort products by sales quantity and get top 5
     top_products = sorted(product_sales.items(), key=lambda x: x[1], reverse=True)[:5] if product_sales else []
@@ -1136,11 +1159,8 @@ def delete_medicine_direct(id):
         medicine = Medicine.query.get_or_404(id)
         medicine_name = medicine.name
         
-        # Check if there are sales records for this medicine
-        sales_count = Sale.query.filter_by(medicine_id=id).count()
-        if sales_count > 0:
-            flash(f'Cannot delete {medicine_name} because it has {sales_count} sales records', 'error')
-            return redirect(url_for('index'))
+        # We now allow deletion of medicines with sales records
+        # since sales store medicine details independently
         
         db.session.delete(medicine)
         db.session.commit()
