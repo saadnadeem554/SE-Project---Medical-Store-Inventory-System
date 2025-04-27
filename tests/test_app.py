@@ -226,12 +226,13 @@ def test_update_medicine(auth_pharmacist, sample_medicine):
         medicine = Medicine.query.filter_by(name=sample_medicine['name']).first()
         medicine_id = medicine.id
     
-    # Update the medicine
+    # Update the medicine - add the missing min_stock_level field
     updated_data = {
         'name': 'Updated Medicine',
         'category': 'Antibiotics',
         'price': '15.75',
         'quantity': '65',
+        'min_stock_level': '15',  # Add the missing field
         'expiry_date': (datetime.datetime.now() + timedelta(days=500)).strftime('%Y-%m-%d')
     }
     
@@ -248,6 +249,7 @@ def test_update_medicine(auth_pharmacist, sample_medicine):
         assert updated.name == updated_data['name']
         assert updated.price == float(updated_data['price'])
         assert updated.quantity == int(updated_data['quantity'])
+        assert updated.min_stock_level == int(updated_data['min_stock_level'])
 
 def test_delete_medicine(auth_pharmacist, sample_medicine):
     """Test deleting a medicine."""

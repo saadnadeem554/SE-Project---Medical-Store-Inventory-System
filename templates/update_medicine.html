@@ -6,12 +6,16 @@
 <form method="POST" class="col-md-6">
     <div class="mb-3">
         <label for="name" class="form-label">Medicine Name</label>
-        <input type="text" class="form-control" id="name" name="name" value="{{ medicine.name }}" required>
+        <input type="text" class="form-label" id="name" name="name" value="{{ medicine.name }}" required>
     </div>
 
     <div class="mb-3">
         <label for="category" class="form-label">Category</label>
-        <input type="text" class="form-control" id="category" name="category" value="{{ medicine.category }}" required>
+        <select class="form-select" id="category" name="category" required>
+            {% for category in MEDICINE_CATEGORIES %}
+                <option value="{{ category }}" {% if category == medicine.category %}selected{% endif %}>{{ category }}</option>
+            {% endfor %}
+        </select>
     </div>
 
     <div class="mb-3">
@@ -22,6 +26,12 @@
     <div class="mb-3">
         <label for="quantity" class="form-label">Quantity</label>
         <input type="number" class="form-control" id="quantity" name="quantity" value="{{ medicine.quantity }}" required>
+    </div>
+    
+    <!-- Add the missing min_stock_level field -->
+    <div class="mb-3">
+        <label for="min_stock_level" class="form-label">Minimum Stock Level</label>
+        <input type="number" class="form-control" id="min_stock_level" name="min_stock_level" value="{{ medicine.min_stock_level }}" required>
     </div>
 
     <div class="mb-3">

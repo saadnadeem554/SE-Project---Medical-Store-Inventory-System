@@ -603,6 +603,11 @@ def add_medicine():
                 flash('Medicine name and category are required', 'error')
                 return render_template('add_medicine.html', categories=MEDICINE_CATEGORIES)
             
+            # Add this validation in add_medicine
+            if category not in MEDICINE_CATEGORIES:
+                flash('Please select a valid category from the list', 'error')
+                return render_template('add_medicine.html', categories=MEDICINE_CATEGORIES)
+            
             # Convert numeric values with proper error handling
             try:
                 price = float(price_str)
@@ -633,6 +638,11 @@ def add_medicine():
                 flash('Invalid date format. Use YYYY-MM-DD', 'error')
                 return render_template('add_medicine.html', categories=MEDICINE_CATEGORIES)
             
+            # Add this validation after parsing the expiry_date in add_medicine
+            if expiry_date < datetime.now().date():
+                flash('Expiry date cannot be in the past', 'error')
+                return render_template('add_medicine.html', categories=MEDICINE_CATEGORIES)
+                        
             # Check for exact duplicates (same name, category, and expiry date)
             existing_medicine = Medicine.query.filter_by(
                 name=name, 
@@ -681,7 +691,7 @@ def update_medicine(id):
         category = request.form['category']
         if category not in MEDICINE_CATEGORIES:
             flash('Please select a valid category from the list', 'error')
-            return render_template('update_medicine.html', medicine=medicine)
+            return render_template('update_medicine.html', medicine=medicine, MEDICINE_CATEGORIES=MEDICINE_CATEGORIES)
 
         # Fixed to use category instead of description
         medicine.category = request.form['category']
@@ -690,27 +700,38 @@ def update_medicine(id):
         try:
             quantity = int(request.form['quantity'])
             price = float(request.form['price'])
+            min_stock_level = int(request.form.get('min_stock_level', 0))
             
             if price <= 0:
                 flash('Price must be a positive number', 'error')
-                return render_template('update_medicine.html', medicine=medicine)
+                return render_template('update_medicine.html', medicine=medicine, MEDICINE_CATEGORIES=MEDICINE_CATEGORIES)
             
             if quantity < 0:
                 flash('Quantity cannot be negative', 'error')
-                return render_template('update_medicine.html', medicine=medicine)
+                return render_template('update_medicine.html', medicine=medicine, MEDICINE_CATEGORIES=MEDICINE_CATEGORIES)
             
+            if min_stock_level <= 0:
+                flash('Minimum stock level must be a positive number', 'error')
+                return render_template('update_medicine.html', medicine=medicine, MEDICINE_CATEGORIES=MEDICINE_CATEGORIES)
+        
             medicine.quantity = quantity
             medicine.price = price
+            medicine.min_stock_level = min_stock_level
             medicine.expiry_date = datetime.strptime(request.form['expiry_date'], '%Y-%m-%d').date()
                 
         except ValueError:
-            flash('Please enter valid numeric values for price and quantity', 'error')
-            return render_template('update_medicine.html', medicine=medicine)
+            flash('Please enter valid numeric values for price, quantity and minimum stock level', 'error')
+            return render_template('update_medicine.html', medicine=medicine, MEDICINE_CATEGORIES=MEDICINE_CATEGORIES)
+        
+        expiry_date = datetime.strptime(request.form['expiry_date'], '%Y-%m-%d').date()
+        if expiry_date < datetime.now().date():
+            flash('Expiry date cannot be in the past', 'error')
+            return render_template('update_medicine.html', medicine=medicine, MEDICINE_CATEGORIES=MEDICINE_CATEGORIES)
         
         db.session.commit()
         flash('Medicine updated successfully!', 'success')
         return redirect(url_for('index'))
-    return render_template('update_medicine.html', medicine=medicine)
+    return render_template('update_medicine.html', medicine=medicine, MEDICINE_CATEGORIES=MEDICINE_CATEGORIES)
 
 # Fix route name to match navigation link
 @app.route('/remove_expired')
