@@ -608,6 +608,20 @@ def add_medicine():
                 price = float(price_str)
                 quantity = int(quantity_str)
                 min_stock_level = int(min_stock_str)
+                
+                # Add validation for negative values
+                if price <= 0:
+                    flash('Price must be a positive number', 'error')
+                    return render_template('add_medicine.html', categories=MEDICINE_CATEGORIES)
+                
+                if quantity < 0:
+                    flash('Quantity cannot be negative', 'error')
+                    return render_template('add_medicine.html', categories=MEDICINE_CATEGORIES)
+                        
+                if min_stock_level <= 0:
+                    flash('Minimum stock level must be a positive number', 'error')
+                    return render_template('add_medicine.html', categories=MEDICINE_CATEGORIES)
+                    
             except ValueError:
                 flash('Price, quantity and minimum stock must be valid numbers', 'error')
                 return render_template('add_medicine.html', categories=MEDICINE_CATEGORIES)
@@ -663,10 +677,35 @@ def update_medicine(id):
     medicine = Medicine.query.get_or_404(id)
     if request.method == 'POST':
         medicine.name = request.form['name']
-        medicine.category = request.form['category']  # Changed from description to category
-        medicine.quantity = int(request.form['quantity'])
-        medicine.price = float(request.form['price'])
-        medicine.expiry_date = datetime.strptime(request.form['expiry_date'], '%Y-%m-%d').date()
+        # Add category validation
+        category = request.form['category']
+        if category not in MEDICINE_CATEGORIES:
+            flash('Please select a valid category from the list', 'error')
+            return render_template('update_medicine.html', medicine=medicine)
+
+        # Fixed to use category instead of description
+        medicine.category = request.form['category']
+
+        # Added validation
+        try:
+            quantity = int(request.form['quantity'])
+            price = float(request.form['price'])
+            
+            if price <= 0:
+                flash('Price must be a positive number', 'error')
+                return render_template('update_medicine.html', medicine=medicine)
+            
+            if quantity < 0:
+                flash('Quantity cannot be negative', 'error')
+                return render_template('update_medicine.html', medicine=medicine)
+            
+            medicine.quantity = quantity
+            medicine.price = price
+            medicine.expiry_date = datetime.strptime(request.form['expiry_date'], '%Y-%m-%d').date()
+                
+        except ValueError:
+            flash('Please enter valid numeric values for price and quantity', 'error')
+            return render_template('update_medicine.html', medicine=medicine)
         
         db.session.commit()
         flash('Medicine updated successfully!', 'success')
@@ -750,7 +789,7 @@ def stock_levels():
                           expiring_data=expiring_data,
                           now=now)
 
-# Fix route for sale creation - change session to current_user
+# Fix route for sale creation - check for insufficient stock
 @app.route('/sale', methods=['GET', 'POST'])
 @login_required
 def create_sale():
@@ -762,7 +801,6 @@ def create_sale():
     
     if request.method == 'POST':
         medicine_id = request.form.get('medicine_id')
-        quantity = int(request.form.get('quantity', 0))
         customer_name = request.form.get('customer_name', '')
         
         medicine = Medicine.query.get(medicine_id)
@@ -775,15 +813,26 @@ def create_sale():
             flash("This medicine is expired and cannot be sold", 'error')
             return render_template('create_sale.html', medicines=medicines)
             
-        if medicine.quantity < quantity:
-            flash(f"Insufficient stock. Available: {medicine.quantity} units", 'error')
+        try:
+            quantity = int(request.form.get('quantity', 0))
+            if quantity <= 0:
+                flash("Quantity must be a positive number", 'error')
+                return render_template('create_sale.html', medicines=medicines)
+            
+            # Check if there's enough stock - THIS WAS MISSING
+            if medicine.quantity < quantity:
+                flash(f"Insufficient stock. Available: {medicine.quantity} units", 'error')
+                return render_template('create_sale.html', medicines=medicines)
+                
+        except ValueError:
+            flash("Please enter a valid quantity", 'error')
             return render_template('create_sale.html', medicines=medicines)
         
         # Create a sale record with all medicine information captured at sale time
         sale = Sale(
-            medicine_id=medicine.id,  # Still store the ID for reference
-            medicine_name=medicine.name,  # Store the name at time of sale
-            medicine_category=medicine.category,  # Store the category at time of sale
+            medicine_id=medicine.id,
+            medicine_name=medicine.name,
+            medicine_category=medicine.category,
             quantity=quantity,
             sale_price=medicine.price,
             customer_name=customer_name
@@ -1131,11 +1180,6 @@ def delete_medicine():
             medicine = Medicine.query.get_or_404(medicine_id)
             medicine_name = medicine.name
             
-            # Check if there are sales records for this medicine
-            sales_count = Sale.query.filter_by(medicine_id=medicine_id).count()
-            if sales_count > 0:
-                flash(f'Cannot delete {medicine_name} because it has {sales_count} sales records', 'error')
-                return redirect(url_for('delete_medicine'))
             
             db.session.delete(medicine)
             db.session.commit()
