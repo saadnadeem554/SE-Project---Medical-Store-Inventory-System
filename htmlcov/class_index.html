@@ -11,7 +11,7 @@
 <header>
     <div class="content">
         <h1>Coverage report:
-            <span class="pc_cov">80%</span>
+            <span class="pc_cov">87%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -27,6 +27,8 @@
                         <kbd>s</kbd>
                         <kbd>m</kbd>
                         <kbd>x</kbd>
+                        <kbd>b</kbd>
+                        <kbd>p</kbd>
                         <kbd>c</kbd>
                         &nbsp; change column sorting
                     </p>
@@ -55,7 +57,7 @@
         </h2>
         <p class="text">
             <a class="nav" href="https://coverage.readthedocs.io/en/7.8.0">coverage.py v7.8.0</a>,
-            created at 2025-04-27 13:46 +0500
+            created at 2025-04-27 16:00 +0500
         </p>
     </div>
 </header>
@@ -68,6 +70,8 @@
                 <th id="statements" aria-sort="none" data-default-sort-order="descending" data-shortcut="s">statements<span class="arrows"></span></th>
                 <th id="missing" aria-sort="none" data-default-sort-order="descending" data-shortcut="m">missing<span class="arrows"></span></th>
                 <th id="excluded" aria-sort="none" data-default-sort-order="descending" data-shortcut="x">excluded<span class="arrows"></span></th>
+                <th id="branches" aria-sort="none" data-default-sort-order="descending" data-shortcut="b">branches<span class="arrows"></span></th>
+                <th id="partial" aria-sort="none" data-default-sort-order="descending" data-shortcut="p">partial<span class="arrows"></span></th>
                 <th id="coverage" class="right" aria-sort="none" data-shortcut="c">coverage<span class="arrows"></span></th>
             </tr>
         </thead>
@@ -78,20 +82,26 @@
                 <td>1</td>
                 <td>0</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="app_py.html#t42">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t42"><data value='Medicine'>Medicine</data></a></td>
+                <td class="name left"><a href="app_py.html#t43">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t43"><data value='Medicine'>Medicine</data></a></td>
                 <td>6</td>
-                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="4 6">67%</td>
+                <td>0</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="10 10">100%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="app_py.html#t65">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t65"><data value='Sale'>Sale</data></a></td>
+                <td class="name left"><a href="app_py.html#t66">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t66"><data value='Sale'>Sale</data></a></td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
@@ -99,20 +109,24 @@
             <tr class="region">
                 <td class="name left"><a href="app_py.html">app.py</a></td>
                 <td class="name left"><a href="app_py.html"><data value=''><span class='no-noun'>(no class)</span></data></a></td>
-                <td>545</td>
-                <td>108</td>
+                <td>523</td>
+                <td>57</td>
                 <td>0</td>
-                <td class="right" data-ratio="437 545">80%</td>
+                <td>140</td>
+                <td>25</td>
+                <td class="right" data-ratio="577 663">87%</td>
             </tr>
         </tbody>
         <tfoot>
             <tr class="total">
                 <td class="name left">Total</td>
                 <td class="name left">&nbsp;</td>
-                <td>553</td>
-                <td>110</td>
+                <td>531</td>
+                <td>57</td>
                 <td>0</td>
-                <td class="right" data-ratio="443 553">80%</td>
+                <td>144</td>
+                <td>25</td>
+                <td class="right" data-ratio="589 675">87%</td>
             </tr>
         </tfoot>
     </table>
@@ -124,7 +138,7 @@
     <div class="content">
         <p>
             <a class="nav" href="https://coverage.readthedocs.io/en/7.8.0">coverage.py v7.8.0</a>,
-            created at 2025-04-27 13:46 +0500
+            created at 2025-04-27 16:00 +0500
         </p>
     </div>
     <aside class="hidden">

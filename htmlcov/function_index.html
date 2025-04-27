@@ -11,7 +11,7 @@
 <header>
     <div class="content">
         <h1>Coverage report:
-            <span class="pc_cov">80%</span>
+            <span class="pc_cov">87%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -27,6 +27,8 @@
                         <kbd>s</kbd>
                         <kbd>m</kbd>
                         <kbd>x</kbd>
+                        <kbd>b</kbd>
+                        <kbd>p</kbd>
                         <kbd>c</kbd>
                         &nbsp; change column sorting
                     </p>
@@ -55,7 +57,7 @@
         </h2>
         <p class="text">
             <a class="nav" href="https://coverage.readthedocs.io/en/7.8.0">coverage.py v7.8.0</a>,
-            created at 2025-04-27 13:46 +0500
+            created at 2025-04-27 16:00 +0500
         </p>
     </div>
 </header>
@@ -68,6 +70,8 @@
                 <th id="statements" aria-sort="none" data-default-sort-order="descending" data-shortcut="s">statements<span class="arrows"></span></th>
                 <th id="missing" aria-sort="none" data-default-sort-order="descending" data-shortcut="m">missing<span class="arrows"></span></th>
                 <th id="excluded" aria-sort="none" data-default-sort-order="descending" data-shortcut="x">excluded<span class="arrows"></span></th>
+                <th id="branches" aria-sort="none" data-default-sort-order="descending" data-shortcut="b">branches<span class="arrows"></span></th>
+                <th id="partial" aria-sort="none" data-default-sort-order="descending" data-shortcut="p">partial<span class="arrows"></span></th>
                 <th id="coverage" class="right" aria-sort="none" data-shortcut="c">coverage<span class="arrows"></span></th>
             </tr>
         </thead>
@@ -78,217 +82,261 @@
                 <td>1</td>
                 <td>0</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="app_py.html#t39">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t39"><data value='role'>User.role</data></a></td>
+                <td class="name left"><a href="app_py.html#t40">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t40"><data value='role'>User.role</data></a></td>
                 <td>1</td>
                 <td>0</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="app_py.html#t53">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t53"><data value='is_expired'>Medicine.is_expired</data></a></td>
+                <td class="name left"><a href="app_py.html#t54">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t54"><data value='is_expired'>Medicine.is_expired</data></a></td>
                 <td>1</td>
                 <td>0</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="app_py.html#t56">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t56"><data value='stock_status'>Medicine.stock_status</data></a></td>
+                <td class="name left"><a href="app_py.html#t57">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t57"><data value='stock_status'>Medicine.stock_status</data></a></td>
                 <td>5</td>
-                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="3 5">60%</td>
+                <td>0</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="9 9">100%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="app_py.html#t76">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t76"><data value='total_price'>Sale.total_price</data></a></td>
+                <td class="name left"><a href="app_py.html#t77">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t77"><data value='total_price'>Sale.total_price</data></a></td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="app_py.html#t478">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t478"><data value='login'>login</data></a></td>
+                <td class="name left"><a href="app_py.html#t479">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t479"><data value='login'>login</data></a></td>
                 <td>19</td>
                 <td>5</td>
                 <td>0</td>
-                <td class="right" data-ratio="14 19">74%</td>
+                <td>8</td>
+                <td>1</td>
+                <td class="right" data-ratio="19 27">70%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="app_py.html#t520">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t520"><data value='logout'>logout</data></a></td>
+                <td class="name left"><a href="app_py.html#t521">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t521"><data value='logout'>logout</data></a></td>
                 <td>4</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="4 4">100%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="app_py.html#t528">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t528"><data value='root'>root</data></a></td>
+                <td class="name left"><a href="app_py.html#t529">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t529"><data value='root'>root</data></a></td>
                 <td>9</td>
-                <td>9</td>
+                <td>5</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 9">0%</td>
+                <td>6</td>
+                <td>1</td>
+                <td class="right" data-ratio="7 15">47%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="app_py.html#t555">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t555"><data value='index'>index</data></a></td>
+                <td class="name left"><a href="app_py.html#t556">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t556"><data value='index'>index</data></a></td>
                 <td>13</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="13 13">100%</td>
+                <td>6</td>
+                <td>0</td>
+                <td class="right" data-ratio="19 19">100%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="app_py.html#t586">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t586"><data value='add_medicine'>add_medicine</data></a></td>
+                <td class="name left"><a href="app_py.html#t587">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t587"><data value='add_medicine'>add_medicine</data></a></td>
                 <td>55</td>
-                <td>15</td>
+                <td>11</td>
                 <td>0</td>
-                <td class="right" data-ratio="40 55">73%</td>
+                <td>18</td>
+                <td>6</td>
+                <td class="right" data-ratio="56 73">77%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="app_py.html#t682">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t682"><data value='update_medicine'>update_medicine</data></a></td>
+                <td class="name left"><a href="app_py.html#t683">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t683"><data value='update_medicine'>update_medicine</data></a></td>
                 <td>39</td>
-                <td>16</td>
+                <td>11</td>
                 <td>0</td>
-                <td class="right" data-ratio="23 39">59%</td>
+                <td>14</td>
+                <td>4</td>
+                <td class="right" data-ratio="38 53">72%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="app_py.html#t739">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t739"><data value='remove_expired'>remove_expired</data></a></td>
+                <td class="name left"><a href="app_py.html#t740">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t740"><data value='remove_expired'>remove_expired</data></a></td>
                 <td>14</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="11 14">79%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="15 18">83%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="app_py.html#t764">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t764"><data value='stock_levels'>stock_levels</data></a></td>
+                <td class="name left"><a href="app_py.html#t765">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t765"><data value='stock_levels'>stock_levels</data></a></td>
                 <td>18</td>
-                <td>4</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="14 18">78%</td>
+                <td>8</td>
+                <td>2</td>
+                <td class="right" data-ratio="23 26">88%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="app_py.html#t816">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t816"><data value='create_sale'>create_sale</data></a></td>
+                <td class="name left"><a href="app_py.html#t817">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t817"><data value='create_sale'>create_sale</data></a></td>
                 <td>36</td>
-                <td>11</td>
+                <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="25 36">69%</td>
+                <td>12</td>
+                <td>1</td>
+                <td class="right" data-ratio="43 48">90%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="app_py.html#t879">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t879"><data value='reports_dashboard'>reports_dashboard</data></a></td>
+                <td class="name left"><a href="app_py.html#t880">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t880"><data value='reports_dashboard'>reports_dashboard</data></a></td>
                 <td>4</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="4 4">100%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="6 6">100%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="app_py.html#t889">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t889"><data value='inventory_status_report'>inventory_status_report</data></a></td>
+                <td class="name left"><a href="app_py.html#t890">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t890"><data value='inventory_status_report'>inventory_status_report</data></a></td>
                 <td>20</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="20 20">100%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="22 22">100%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="app_py.html#t953">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t953"><data value='export_inventory_csv'>export_inventory_csv</data></a></td>
+                <td class="name left"><a href="app_py.html#t954">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t954"><data value='export_inventory_csv'>export_inventory_csv</data></a></td>
                 <td>13</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="13 13">100%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="17 17">100%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="app_py.html#t985">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t985"><data value='check_stock_and_notify'>check_stock_and_notify</data></a></td>
+                <td class="name left"><a href="app_py.html#t986">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t986"><data value='check_stock_and_notify'>check_stock_and_notify</data></a></td>
                 <td>8</td>
                 <td>0</td>
+                <td>0</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="10 10">100%</td>
+            </tr>
+            <tr class="region">
+                <td class="name left"><a href="app_py.html#t1018">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t1018"><data value='check_stock'>check_stock</data></a></td>
+                <td>6</td>
+                <td>0</td>
+                <td>0</td>
+                <td>2</td>
                 <td>0</td>
                 <td class="right" data-ratio="8 8">100%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="app_py.html#t1017">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t1017"><data value='check_stock'>check_stock</data></a></td>
-                <td>6</td>
-                <td>2</td>
-                <td>0</td>
-                <td class="right" data-ratio="4 6">67%</td>
-            </tr>
-            <tr class="region">
-                <td class="name left"><a href="app_py.html#t1032">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t1032"><data value='auto_check_stock'>auto_check_stock</data></a></td>
+                <td class="name left"><a href="app_py.html#t1033">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t1033"><data value='auto_check_stock'>auto_check_stock</data></a></td>
                 <td>4</td>
-                <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="1 4">25%</td>
+                <td>0</td>
+                <td>4</td>
+                <td>1</td>
+                <td class="right" data-ratio="7 8">88%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="app_py.html#t1043">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t1043"><data value='export_sales_csv'>export_sales_csv</data></a></td>
+                <td class="name left"><a href="app_py.html#t1044">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t1044"><data value='export_sales_csv'>export_sales_csv</data></a></td>
                 <td>13</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="11 13">85%</td>
+                <td>4</td>
+                <td>1</td>
+                <td class="right" data-ratio="14 17">82%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="app_py.html#t1075">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t1075"><data value='sales_report'>sales_report</data></a></td>
+                <td class="name left"><a href="app_py.html#t1076">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t1076"><data value='sales_report'>sales_report</data></a></td>
                 <td>38</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="36 38">95%</td>
+                <td>12</td>
+                <td>2</td>
+                <td class="right" data-ratio="46 50">92%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="app_py.html#t1158">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t1158"><data value='inject_medicines'>inject_medicines</data></a></td>
+                <td class="name left"><a href="app_py.html#t1159">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t1159"><data value='inject_medicines'>inject_medicines</data></a></td>
                 <td>13</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="13 13">100%</td>
-            </tr>
-            <tr class="region">
-                <td class="name left"><a href="app_py.html#t1186">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t1186"><data value='delete_medicine'>delete_medicine</data></a></td>
-                <td>20</td>
-                <td>20</td>
+                <td>10</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 20">0%</td>
+                <td class="right" data-ratio="23 23">100%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="app_py.html#t1218">app.py</a></td>
-                <td class="name left"><a href="app_py.html#t1218"><data value='delete_medicine_direct'>delete_medicine_direct</data></a></td>
+                <td class="name left"><a href="app_py.html#t1188">app.py</a></td>
+                <td class="name left"><a href="app_py.html#t1188"><data value='delete_medicine_direct'>delete_medicine_direct</data></a></td>
                 <td>13</td>
-                <td>5</td>
+                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="8 13">62%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="12 15">80%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="app_py.html">app.py</a></td>
                 <td class="name left"><a href="app_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
-                <td>185</td>
+                <td>183</td>
                 <td>11</td>
                 <td>0</td>
-                <td class="right" data-ratio="174 185">94%</td>
+                <td>20</td>
+                <td>5</td>
+                <td class="right" data-ratio="187 203">92%</td>
             </tr>
         </tbody>
         <tfoot>
             <tr class="total">
                 <td class="name left">Total</td>
                 <td class="name left">&nbsp;</td>
-                <td>553</td>
-                <td>110</td>
+                <td>531</td>
+                <td>57</td>
                 <td>0</td>
-                <td class="right" data-ratio="443 553">80%</td>
+                <td>144</td>
+                <td>25</td>
+                <td class="right" data-ratio="589 675">87%</td>
             </tr>
         </tfoot>
     </table>
@@ -300,7 +348,7 @@
     <div class="content">
         <p>
             <a class="nav" href="https://coverage.readthedocs.io/en/7.8.0">coverage.py v7.8.0</a>,
-            created at 2025-04-27 13:46 +0500
+            created at 2025-04-27 16:00 +0500
         </p>
     </div>
     <aside class="hidden">

@@ -28,6 +28,7 @@ def load_user(user_id):
 
 # User Model
 class User(UserMixin, db.Model):
+    __tablename__ = 'user'  # Explicitly set the table name
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
@@ -1181,37 +1182,6 @@ def inject_medicines():
         }
     return {'medicines': [], 'low_stock_count': 0, 'out_of_stock_count': 0, 'notification_count': 0}
 
-@app.route('/delete_medicine', methods=['GET', 'POST'])
-@login_required
-def delete_medicine():
-    if current_user.role != 'pharmacist':
-        flash('Access denied: Pharmacists only', 'error')
-        return redirect(url_for('index'))
-    
-    medicines = Medicine.query.all()
-    
-    if request.method == 'POST':
-        medicine_id = request.form.get('medicine_id')
-        
-        if not medicine_id:
-            flash('Please select a medicine', 'error')
-            return redirect(url_for('delete_medicine'))
-        
-        try:
-            medicine = Medicine.query.get_or_404(medicine_id)
-            medicine_name = medicine.name
-            
-            
-            db.session.delete(medicine)
-            db.session.commit()
-            flash(f'Medicine {medicine_name} deleted successfully', 'success')
-            return redirect(url_for('index'))
-            
-        except Exception as e:
-            db.session.rollback()
-            flash(f'Error deleting medicine: {str(e)}', 'error')
-    
-    return render_template('delete_medicine.html', medicines=medicines)
 
 @app.route('/delete_medicine_direct/<int:id>', methods=['POST'])
 @login_required
