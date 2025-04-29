@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\erkp\Desktop\SE-Project\venv
+set VIRTUAL_ENV=C:\Users\erkp\Desktop\22i-0759-22i-1139-22i-1030-project\SE-Project---Medical-Store-Inventory-System\venv
 
 if not defined PROMPT set PROMPT=$P$G
 
